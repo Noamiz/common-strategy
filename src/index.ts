@@ -1,14 +1,19 @@
-// Shared primitives & DTO building blocks
-export * from './types';
+// Shared primitives
+export * from './types/base';
 
-// Shared constants and environment helpers
-export * from './constants';
+// User & auth models
+export * from './types/user';
+export * from './types/auth';
 
-// Logging interfaces
-export * from './logging';
+// API error & result model
+export * from './types/api';
 
-// API contracts (HTTP + gateway envelopes)
-export * from './api';
+// Constants
+export * from './constants/env';
 
-// Common error shapes and helpers
-export * from './errors';
+// Logging
+export * from './logging/logger';
+
+// TODO: later – export shared API contracts for gateway envelopes, etc.
+// export * from './api/envelope';
+// export * from './errors';
