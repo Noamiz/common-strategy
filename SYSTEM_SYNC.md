@@ -64,9 +64,8 @@ We are building a **multi-service, multi-app architecture** with 6 main reposito
 - **Shared types and DTOs**
 
   - User DTOs
-  - Auth tokens and session-related types
-  - Error shapes and result wrappers
-  - Envelope/message types for gateway communication
+  - Auth tokens, sessions, and verification-code flows
+  - Error shapes, `Result` helpers, and HTTP/gateway envelopes
 
 - **Shared constants and config interfaces**
 
@@ -85,7 +84,44 @@ We are building a **multi-service, multi-app architecture** with 6 main reposito
 
 ---
 
-## 4. Documentation Sources
+## 4. Current Code Modules (Nov 2025)
+
+- `src/index.ts` – central re-export surface for everything listed below. Downstream packages should import from the package root instead of deep paths.
+- `src/types/`
+  - `base.ts` defines primitives such as `UUID`, `UnixMs`, and `BaseEntity`.
+  - `user.ts` contains the canonical `User` DTO + email alias.
+  - `auth.ts` adds auth token/session DTOs plus `send-code` / `verify-code` contracts.
+  - `api.ts` provides API-facing `ApiError` + `{ ok, error }` style results.
+- `src/api/`
+  - `http.ts` standardizes HTTP envelopes and cursor-based pagination results.
+  - `gateway.ts` defines real-time envelopes, ack payloads, and subscription cursors (channel enums pending).
+- `src/constants/`
+  - `env.ts` exposes `APP_NAME` and `ENV` helpers (`isDev`, `isProd`, `nodeEnv`).
+- `src/errors/`
+  - `base.ts` standardizes `CommonError`, `ValidationError`, and the `createError` helper.
+  - `result.ts` provides functional helpers `ok/err` built on the shared `Result<T>`.
+- `src/logging/logger.ts`
+  - Logger interface (`debug/info/warn/error`) plus a minimal `consoleLogger`.
+- `src/__tests__/smoke.test.ts`
+  - Vitest suite verifying that env flags, logger, and DTO exports work through the package entrypoint.
+
+Keep this section updated whenever new shared contracts land so the other repos (and agents) know what is ready to consume.
+
+---
+
+## 5. Workflow Notes
+
+- Install dependencies with `yarn install`.
+- Primary scripts:
+  - `yarn dev` – watch-mode bundle via tsup.
+  - `yarn build` – emit CJS + ESM bundles with `.d.ts` files.
+  - `yarn test` – Vitest smoke tests.
+  - `yarn lint` – ESLint over `src`.
+- Any change to exported contracts must include README + System Sync updates and coordination across `server-`, `gateway-`, `web-client-`, and `mobile-client-strategy`.
+
+---
+
+## 6. Documentation Sources
 
 - **Confluence Space**: “End to End Company Products”
   - `01 – Vision & Strategy` – product vision, personas, roadmap.
@@ -97,7 +133,7 @@ If this file and Confluence ever disagree, **Confluence is the source of truth**
 
 ---
 
-## 5. How Agents Should Use This
+## 7. How Agents Should Use This
 
 - Assume all repos **eventually depend** on `common-strategy` for shared contracts.
 - When adding new DTOs, envelopes, or cross-cutting types, prefer adding them here.

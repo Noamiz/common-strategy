@@ -56,13 +56,14 @@ Planned / evolving features:
 - ✅ **Constants & environment helpers**
   - Environment flags (`isDev`, `isProd`)
   - Shared constants for cross-service behavior
-- 🔜 **Core DTOs**
-  - User DTOs
-  - Auth/session tokens and verification flows (e.g. email + 6-digit code)
-- 🔜 **Error model**
-  - Standard error shape and result wrappers
-- 🔜 **Gateway envelopes**
-  - Message envelope types for WebSocket communication via `gateway-strategy`
+- ✅ **Core DTOs**
+  - User profiles, auth/session tokens, verification-code flows
+- ✅ **Error & result model**
+  - Shared `CommonError`, `Result`, and helpers for consistent error handling
+- ✅ **HTTP & pagination envelopes**
+  - API envelopes with typed metadata for cross-service responses
+- 🛠 **Gateway envelopes**
+  - Real-time envelope + ack types exist; concrete channel enums to follow
 
 This list will grow as the system evolves.
 
@@ -80,3 +81,96 @@ yarn add @your-org/common-strategy
 # or
 npm install @your-org/common-strategy
 ```
+
+For internal development we currently use Yarn workspaces / git dependencies while the package remains unpublished.
+
+---
+
+## Getting Started
+
+1. **Clone** this repository alongside the other strategy repos.
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
+3. **Validate the build**
+   ```bash
+   yarn test
+   yarn lint
+   yarn build
+   ```
+4. Use `yarn dev` while iterating so `tsup` rebuilds the dist bundle on changes.
+
+---
+
+## Scripts
+
+- `yarn build` – Compile `src/index.ts` to ESM + CJS bundles with type declarations.
+- `yarn dev` – Same as build but with file watching for local iteration.
+- `yarn test` – Run the Vitest smoke suite under `src/__tests__`.
+- `yarn lint` – ESLint over all TypeScript sources.
+- `yarn prepare` – Hook for package managers; ensures the dist bundle exists before publish/linking.
+
+---
+
+## Project Structure
+
+```
+dist/                # tsup build output (ESM, CJS, and type declarations)
+src/
+  index.ts           # Package entrypoint that re-exports the public surface
+  __tests__/smoke.test.ts
+                     # Vitest smoke test covering env helpers, logger, and DTOs
+  api/
+    http.ts          # HTTP envelope + pagination shapes shared by services
+    gateway.ts       # Real-time gateway envelopes, acks, and cursors
+  constants/
+    env.ts           # `APP_NAME` + ENV helper flags
+  errors/
+    base.ts          # `CommonError`, `ValidationError`, and `createError`
+    result.ts        # Functional-style `Result`, `ok`, and `err` helpers
+  logging/
+    logger.ts        # Logger interface + `consoleLogger` implementation
+  types/
+    base.ts          # UUID/Unix timestamp primitives + `BaseEntity`
+    user.ts          # User DTO shape + email alias
+    auth.ts          # Auth token/session DTOs + send/verify-code contracts
+    api.ts           # API-facing `Result` + `ApiError` definitions
+```
+
+All exports are wired through `src/index.ts` so downstream packages can import from the root (e.g., `import { User } from '@our-org/common-strategy'`).
+
+---
+
+## Contributing
+
+- Prefer adding/adjusting shared contracts here instead of duplicating them downstream.
+- Update this README and `SYSTEM_SYNC.md` whenever the public surface changes.
+- Run `yarn lint && yarn test && yarn build` before raising a PR to keep CI happy.
+- Breaking changes should include upgrade notes and coordination across the other repos.
+
+---
+
+## Related Repositories
+
+- `server-strategy` – Node.js HTTP API server (auth, DB, business logic).
+- `gateway-strategy` – Real-time WebSocket gateway behind Nginx.
+- `web-client-strategy` – React dashboard that consumes these shared contracts.
+- `mobile-client-strategy` – React Native app sharing DTOs and envelopes.
+- `ai-strategy` – ML/AI services that depend on the same DTOs and constants.
+
+---
+
+## Documentation
+
+- `SYSTEM_SYNC.md` – quick-start brief for agents working in this repo.
+- Confluence “End to End Company Products” space:
+  - `02 – System Architecture` for cross-repo diagrams.
+  - `03 – Repositories → common-strategy` for deeper contract notes.
+  - `05 – APIs & Contracts` for downstream consumption guidelines.
+
+---
+
+## License
+
+© End to End Company Products — internal use only until a formal license is published.
