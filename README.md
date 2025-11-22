@@ -1,5 +1,7 @@
 # common-strategy
 
+Part of the secondbase kit – a reusable, always-modern company-in-a-box.
+
 Shared **TypeScript contracts and utilities** for the _End to End Company Products_ system.
 
 This package is the **single source of truth** for:

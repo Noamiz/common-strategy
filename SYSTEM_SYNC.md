@@ -1,5 +1,7 @@
 # System Sync – End to End Company Products
 
+This repo is one of the 7 core repos in the secondbase kit.
+
 ## 1. Purpose of This File
 
 This document gives **AI coding tools (Cursor, ChatGPT, etc.)** and developers a compact overview of:
@@ -62,13 +64,11 @@ We are building a **multi-service, multi-app architecture** with 6 main reposito
 **Responsibilities**:
 
 - **Shared types and DTOs**
-
   - User DTOs
   - Auth tokens, sessions, and verification-code flows
   - Error shapes, `Result` helpers, and HTTP/gateway envelopes
 
 - **Shared constants and config interfaces**
-
   - Environment keys and config shapes
   - Cross-service constants (timeout defaults, enums)
 
